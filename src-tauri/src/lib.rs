@@ -21,6 +21,12 @@ pub fn run() {
             sql: include_str!("../migrations/0002_add_sort_order.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 3,
+            description: "add_skip_weekends",
+            sql: include_str!("../migrations/0003_add_skip_weekends.sql"),
+            kind: MigrationKind::Up,
+        },
     ];
 
     tauri::Builder::default()
