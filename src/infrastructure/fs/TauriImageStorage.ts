@@ -17,11 +17,11 @@ import { buildStoredImageFileName, IMAGES_DIR_NAME } from "./imagePaths";
  * Manual verification required under `pnpm tauri dev` (see apply-progress
  * for the exact steps — this is the Phase 1 task 1.5 smoke test).
  *
- * Depends on the coordinated 3-way allowlist already configured:
- * - `tauri.conf.json`: CSP `img-src 'self' asset: http://asset.localhost`,
- *   `assetProtocol.scope: ["$APPDATA/habit-images/*"]`
- * - `capabilities/default.json`: `fs:allow-copy-file` and `fs:allow-mkdir`
- *   scoped to `$APPDATA/habit-images*`
+ * Depends on the coordinated allowlist already configured:
+ * - `tauri.conf.json`: CSP img-src, assetProtocol.scope on habit-images
+ * - `capabilities/default.json`: fs allow-exists, mkdir, remove on habit-images,
+ *   and fs allow-copy-file on user home (dialog source) plus habit-images dest
+ *   (see default.json for exact glob paths)
  */
 export class TauriImageStorage implements ImageStorage {
   async copy(sourcePath: string): Promise<string> {
