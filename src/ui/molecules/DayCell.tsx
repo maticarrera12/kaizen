@@ -32,7 +32,7 @@ export function DayCell({
     <div
       data-testid="day-cell"
       className={cn(
-        "relative flex min-h-32 flex-col gap-1 rounded-2xl border border-slate-100 bg-surface-card p-2",
+        "relative flex min-h-32 flex-col gap-1 overflow-hidden rounded-2xl border border-slate-100 bg-surface-card p-2",
         !inMonth && "opacity-40",
       )}
     >

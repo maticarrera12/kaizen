@@ -53,4 +53,17 @@ describe("MonthView", () => {
 
     expect(screen.getAllByTestId("day-cell")).toHaveLength(grid.length);
   });
+
+  test("renders a Monday-first weekday header above the grid", () => {
+    const grid = monthGrid("2026-06-01");
+    const days = buildDays(grid.map((cell) => cell.date));
+
+    render(
+      <MonthView grid={grid} days={days} toImageUrl={(path) => `asset://${path}`} />,
+    );
+
+    const header = screen.getByTestId("weekday-header");
+    const labels = Array.from(header.children).map((el) => el.textContent);
+    expect(labels).toEqual(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+  });
 });

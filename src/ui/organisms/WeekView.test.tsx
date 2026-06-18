@@ -46,4 +46,18 @@ describe("WeekView", () => {
 
     expect(screen.getAllByTestId("day-cell")).toHaveLength(7);
   });
+
+  test("renders a Monday-first weekday header above the grid", () => {
+    render(
+      <WeekView
+        weekDates={WEEK_DATES}
+        days={buildDays(WEEK_DATES)}
+        toImageUrl={(path) => `asset://${path}`}
+      />,
+    );
+
+    const header = screen.getByTestId("weekday-header");
+    const labels = Array.from(header.children).map((el) => el.textContent);
+    expect(labels).toEqual(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+  });
 });

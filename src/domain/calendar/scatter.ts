@@ -10,12 +10,16 @@ export interface PostItTransform {
 const MAX_ROTATION_DEG = 8;
 
 /**
- * Safe bounds so the 44px post-it never overflows the cell edges (a 44px
- * box centered at the edge of a typical day-cell footprint needs roughly
- * this much margin at both ends).
+ * Safe bounds so the 44px post-it (positioned by its top-left corner) stays
+ * clear of the cell edges across typical day-cell widths. This is a
+ * percentage-based approximation — it cannot know the exact pixel width of
+ * the cell, so `DayCell`'s scatter area additionally applies
+ * `overflow-hidden` clipped to the card's rounded corners as the hard
+ * guarantee against spill, even if a post-it lands close to an edge on an
+ * unusually narrow viewport.
  */
-const MIN_PCT = 10;
-const MAX_PCT = 90;
+const MIN_PCT = 15;
+const MAX_PCT = 80;
 
 /** FNV-1a (32-bit, no crypto, pure integer ops). */
 function fnv1a(input: string): number {

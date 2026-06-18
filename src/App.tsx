@@ -51,18 +51,22 @@ function App() {
         <TodayView useHabitStore={runtime.useHabitStore} app={runtime.app} />
       )}
       {activeView === "week" && (
-        <CalendarView
-          useCalendarStore={runtime.useCalendarStore}
-          app={runtime.app}
-          mode="week"
-        />
+        <main className="min-h-screen bg-surface px-6 py-10">
+          <CalendarView
+            useCalendarStore={runtime.useCalendarStore}
+            app={runtime.app}
+            mode="week"
+          />
+        </main>
       )}
       {activeView === "month" && (
-        <CalendarView
-          useCalendarStore={runtime.useCalendarStore}
-          app={runtime.app}
-          mode="month"
-        />
+        <main className="min-h-screen bg-surface px-6 py-10">
+          <CalendarView
+            useCalendarStore={runtime.useCalendarStore}
+            app={runtime.app}
+            mode="month"
+          />
+        </main>
       )}
     </>
   );
