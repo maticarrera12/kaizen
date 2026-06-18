@@ -1,8 +1,14 @@
 import type { HabitTrackerApp } from "../../src/infrastructure/composition/createHabitTrackerApp";
 import type { EditHabitPatch } from "../../src/application/use-cases/editHabit";
+import type {
+  CalendarDayResult,
+  LoadCalendarRange,
+  LoadCalendarResult,
+} from "../../src/application/use-cases/loadCalendar";
 import type { LoadTodayResult, HabitTodayViewModel } from "../../src/application/use-cases/loadToday";
 import type { ToggleHabitTodayResult } from "../../src/application/use-cases/toggleHabitToday";
 import type { Habit } from "../../src/application/ports/HabitRepository";
+import type { LocalDate } from "../../src/domain/streak/types";
 
 /**
  * In-memory fake of the composition root's public surface, used to TDD the
@@ -14,6 +20,8 @@ export class FakeHabitTrackerApp implements HabitTrackerApp {
   today = "2026-06-17";
 
   loadTodayCalls = 0;
+  loadCalendarCalls: Array<{ from: LocalDate; to: LocalDate }> = [];
+  calendarDays: Map<LocalDate, CalendarDayResult> = new Map();
   toggleCalls: number[] = [];
   createCalls: Array<{
     name: string;
@@ -38,6 +46,18 @@ export class FakeHabitTrackerApp implements HabitTrackerApp {
       throw new Error("loadToday failed");
     }
     return { today: this.today, habits: this.habits };
+  }
+
+  async loadCalendar(range: LoadCalendarRange): Promise<LoadCalendarResult> {
+    this.loadCalendarCalls.push({ from: range.from, to: range.to });
+    const days = new Map<LocalDate, CalendarDayResult>();
+    for (const date of range.allDatesInOrder) {
+      days.set(
+        date,
+        this.calendarDays.get(date) ?? { date, mascots: [], overflowCount: 0 },
+      );
+    }
+    return { days };
   }
 
   async toggleHabitToday(habitId: number): Promise<ToggleHabitTodayResult> {

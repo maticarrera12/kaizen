@@ -1,8 +1,15 @@
 import type Database from "@tauri-apps/plugin-sql";
 import type { DailyRecordRepository } from "../../application/ports/DailyRecordRepository";
-import type { DailyRecord, LocalDate } from "../../domain/streak/types";
-import { dailyRecordRowToDailyRecord } from "./rowMappers";
-import type { DailyRecordRow } from "./rowMappers";
+import type {
+  CompletedRecordWithHabit,
+  DailyRecord,
+  LocalDate,
+} from "../../domain/streak/types";
+import {
+  completedRecordRowToCompletedRecordWithHabit,
+  dailyRecordRowToDailyRecord,
+} from "./rowMappers";
+import type { CompletedRecordRow, DailyRecordRow } from "./rowMappers";
 
 /**
  * SQLite-backed `DailyRecordRepository` against the sparse `daily_records`
@@ -48,5 +55,29 @@ export class SqliteDailyRecordRepository implements DailyRecordRepository {
       [habitId],
     );
     return rows.map(dailyRecordRowToDailyRecord);
+  }
+
+  /**
+   * Joins completed records to their owning habit's CURRENT name/image_path
+   * for calendar history views. Intentionally has NO `active` filter on
+   * `habits` — soft-deleted habits (`active=0`) MUST still appear in past
+   * days' history (R4.2). Do NOT "fix" this by adding `AND h.active = 1`;
+   * that would silently erase history for any deleted habit.
+   *
+   * IPC-bound — not testable under headless Vitest (see class doc comment).
+   * Verified manually under `pnpm tauri dev` only.
+   */
+  async listCompletedBetween(
+    from: LocalDate,
+    to: LocalDate,
+  ): Promise<CompletedRecordWithHabit[]> {
+    const rows = await this.db.select<CompletedRecordRow[]>(
+      `SELECT dr.habit_id AS habit_id, h.name AS name, h.image_path AS image_path, dr.date AS date
+       FROM daily_records dr
+       JOIN habits h ON h.id = dr.habit_id
+       WHERE dr.completed = 1 AND dr.date BETWEEN $1 AND $2`,
+      [from, to],
+    );
+    return rows.map(completedRecordRowToCompletedRecordWithHabit);
   }
 }

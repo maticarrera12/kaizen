@@ -1,4 +1,8 @@
-import type { DailyRecord, LocalDate } from "../../domain/streak/types";
+import type {
+  CompletedRecordWithHabit,
+  DailyRecord,
+  LocalDate,
+} from "../../domain/streak/types";
 
 export interface DailyRecordRepository {
   upsertToggle(
@@ -7,4 +11,8 @@ export interface DailyRecordRepository {
     completed: boolean,
   ): Promise<void>;
   listForHabit(habitId: number): Promise<DailyRecord[]>;
+  listCompletedBetween(
+    from: LocalDate,
+    to: LocalDate,
+  ): Promise<CompletedRecordWithHabit[]>;
 }

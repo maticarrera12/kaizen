@@ -4,6 +4,11 @@ import type { CreateHabitOptions } from "../../application/use-cases/createHabit
 import { deleteHabit } from "../../application/use-cases/deleteHabit";
 import { editHabit } from "../../application/use-cases/editHabit";
 import type { EditHabitPatch } from "../../application/use-cases/editHabit";
+import { loadCalendar } from "../../application/use-cases/loadCalendar";
+import type {
+  LoadCalendarRange,
+  LoadCalendarResult,
+} from "../../application/use-cases/loadCalendar";
 import { loadToday } from "../../application/use-cases/loadToday";
 import type { LoadTodayResult } from "../../application/use-cases/loadToday";
 import { reorderHabits } from "../../application/use-cases/reorderHabits";
@@ -27,6 +32,7 @@ const DB_PATH = "sqlite:habits.db";
  */
 export interface HabitTrackerApp {
   loadToday(): Promise<LoadTodayResult>;
+  loadCalendar(range: LoadCalendarRange): Promise<LoadCalendarResult>;
   toggleHabitToday(habitId: number): Promise<ToggleHabitTodayResult>;
   createHabit(
     name: string,
@@ -63,6 +69,9 @@ export async function createHabitTrackerApp(): Promise<HabitTrackerApp> {
         appStateRepository,
         clock,
       }),
+
+    loadCalendar: (range: LoadCalendarRange) =>
+      loadCalendar({ dailyRecordRepository }, range),
 
     toggleHabitToday: (habitId: number) =>
       toggleHabitToday(habitId, {

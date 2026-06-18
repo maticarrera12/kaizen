@@ -1,5 +1,9 @@
 import type { Habit } from "../../application/ports/HabitRepository";
-import type { DailyRecord, LocalDate } from "../../domain/streak/types";
+import type {
+  CompletedRecordWithHabit,
+  DailyRecord,
+  LocalDate,
+} from "../../domain/streak/types";
 
 /** Raw shape returned by `db.select<HabitRow[]>(...)` against the `habits` table. */
 export interface HabitRow {
@@ -38,5 +42,24 @@ export function dailyRecordRowToDailyRecord(row: DailyRecordRow): DailyRecord {
   return {
     date: row.date,
     completed: row.completed === 1,
+  };
+}
+
+/** Raw shape returned by the `listCompletedBetween` JOIN query. */
+export interface CompletedRecordRow {
+  habit_id: number;
+  name: string;
+  image_path: string;
+  date: LocalDate;
+}
+
+export function completedRecordRowToCompletedRecordWithHabit(
+  row: CompletedRecordRow,
+): CompletedRecordWithHabit {
+  return {
+    habitId: row.habit_id,
+    name: row.name,
+    imagePath: row.image_path,
+    date: row.date,
   };
 }

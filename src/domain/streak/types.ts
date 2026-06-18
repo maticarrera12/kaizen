@@ -11,3 +11,10 @@ export interface StreakInput {
   createdAt: LocalDate; // habit.created_at, lower bound — never penalize pre-creation days
   skipWeekends: boolean; // true: unmarked Sat/Sun are neutral, not misses
 }
+
+export interface CompletedRecordWithHabit {
+  habitId: number;
+  name: string;
+  imagePath: string;
+  date: LocalDate;
+}

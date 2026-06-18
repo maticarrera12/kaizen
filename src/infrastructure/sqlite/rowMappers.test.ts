@@ -2,8 +2,9 @@ import { describe, expect, test } from "vitest";
 import {
   habitRowToHabit,
   dailyRecordRowToDailyRecord,
+  completedRecordRowToCompletedRecordWithHabit,
 } from "./rowMappers";
-import type { HabitRow, DailyRecordRow } from "./rowMappers";
+import type { HabitRow, DailyRecordRow, CompletedRecordRow } from "./rowMappers";
 
 describe("habitRowToHabit", () => {
   test("maps a raw SQLite row (snake_case, integer booleans) to the domain-facing Habit shape", () => {
@@ -88,6 +89,24 @@ describe("dailyRecordRowToDailyRecord", () => {
     expect(dailyRecordRowToDailyRecord(row)).toEqual({
       date: "2026-06-17",
       completed: true,
+    });
+  });
+});
+
+describe("completedRecordRowToCompletedRecordWithHabit", () => {
+  test("maps a raw JOIN row (snake_case) to the domain-facing CompletedRecordWithHabit shape", () => {
+    const row: CompletedRecordRow = {
+      habit_id: 1,
+      name: "Drink water",
+      image_path: "/data/habit-images/1.png",
+      date: "2026-06-17",
+    };
+
+    expect(completedRecordRowToCompletedRecordWithHabit(row)).toEqual({
+      habitId: 1,
+      name: "Drink water",
+      imagePath: "/data/habit-images/1.png",
+      date: "2026-06-17",
     });
   });
 });
