@@ -49,6 +49,7 @@ describe("HabitForm", () => {
     expect(onSubmit).toHaveBeenCalledWith({
       name: "Drink water",
       imageSourcePath: "/source/img.png",
+      skipWeekends: false,
     });
   });
 
@@ -145,5 +146,59 @@ describe("HabitForm", () => {
     await user.click(screen.getByRole("button", { name: /delete/i }));
 
     expect(onDelete).toHaveBeenCalled();
+  });
+
+  test("D1: CREATE mode renders a skip-weekends toggle, defaulting OFF/unchecked", () => {
+    render(
+      <HabitForm
+        onSubmit={() => {}}
+        onCancel={() => {}}
+        onPickImage={async () => "/source/img.png"}
+        toImageUrl={(p) => `asset://${p}`}
+      />,
+    );
+
+    expect(screen.getByRole("switch", { name: /skip weekends/i })).not.toBeChecked();
+  });
+
+  test("D2: EDIT mode with initialSkipWeekends:true renders the toggle as ON/checked", () => {
+    render(
+      <HabitForm
+        initialName="Gym"
+        initialImageUrl="asset://managed/1.png"
+        initialSkipWeekends={true}
+        onSubmit={() => {}}
+        onCancel={() => {}}
+        onPickImage={async () => "/source/img.png"}
+        toImageUrl={(p) => `asset://${p}`}
+      />,
+    );
+
+    expect(screen.getByRole("switch", { name: /skip weekends/i })).toBeChecked();
+  });
+
+  test("D3: toggling skip-weekends ON and submitting includes skipWeekends:true in the onSubmit payload", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <HabitForm
+        onSubmit={onSubmit}
+        onCancel={() => {}}
+        onPickImage={async () => "/source/img.png"}
+        toImageUrl={(p) => `asset://${p}`}
+      />,
+    );
+
+    await user.type(screen.getByLabelText(/name/i), "Gym");
+    await user.click(screen.getByRole("button", { name: /choose image/i }));
+    await user.click(screen.getByRole("switch", { name: /skip weekends/i }));
+    await user.click(screen.getByRole("button", { name: /save/i }));
+
+    expect(onSubmit).toHaveBeenCalledWith({
+      name: "Gym",
+      imageSourcePath: "/source/img.png",
+      skipWeekends: true,
+    });
   });
 });

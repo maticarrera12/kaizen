@@ -24,7 +24,7 @@ describe("TodayView", () => {
 
   test("renders habit cards once loaded", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false, skipWeekends: false },
     ];
 
     render(<TodayView useHabitStore={useHabitStore} app={app} />);
@@ -47,7 +47,7 @@ describe("TodayView", () => {
 
   test("clicking a habit card toggles it", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false, skipWeekends: false },
     ];
     const user = userEvent.setup();
     render(<TodayView useHabitStore={useHabitStore} app={app} />);
@@ -60,7 +60,7 @@ describe("TodayView", () => {
 
   test("clicking edit opens a prefilled form and saving calls editHabit", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false, skipWeekends: false },
     ];
     const user = userEvent.setup();
     render(<TodayView useHabitStore={useHabitStore} app={app} />);
@@ -74,13 +74,20 @@ describe("TodayView", () => {
     await user.click(screen.getByRole("button", { name: /save/i }));
 
     expect(app.editCalls).toEqual([
-      { habitId: 1, patch: { name: "Drink more water" } },
+      {
+        habitId: 1,
+        patch: {
+          name: "Drink more water",
+          imageSourcePath: undefined,
+          skipWeekends: false,
+        },
+      },
     ]);
   });
 
   test("clicking delete inside the edit form deletes the habit", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false, skipWeekends: false },
     ];
     const user = userEvent.setup();
     render(<TodayView useHabitStore={useHabitStore} app={app} />);

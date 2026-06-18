@@ -22,6 +22,7 @@ describe("toggleHabitToday", () => {
       active: true,
       currentStreak: 0,
       sortOrder: 0,
+      skipWeekends: false,
     });
   });
 

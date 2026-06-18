@@ -19,6 +19,7 @@ describe("editHabit", () => {
       active: true,
       currentStreak: 5,
       sortOrder: 0,
+      skipWeekends: false,
     });
   });
 
@@ -61,5 +62,38 @@ describe("editHabit", () => {
 
     expect(imageStorage.deletedPaths).toHaveLength(0);
     expect(habitRepo.all()[0].imagePath).toBe("/managed/old.png");
+  });
+
+  test("C4: toggles skipWeekends ON", async () => {
+    await editHabit(1, { skipWeekends: true }, {
+      habitRepository: habitRepo,
+      imageStorage,
+    });
+
+    expect(habitRepo.all()[0].skipWeekends).toBe(true);
+  });
+
+  test("C5: toggles skipWeekends OFF", async () => {
+    habitRepo.all()[0].skipWeekends = true;
+
+    await editHabit(1, { skipWeekends: false }, {
+      habitRepository: habitRepo,
+      imageStorage,
+    });
+
+    expect(habitRepo.all()[0].skipWeekends).toBe(false);
+  });
+
+  test("C6: skipWeekends undefined leaves the value unchanged, only name is patched", async () => {
+    habitRepo.all()[0].skipWeekends = true;
+
+    await editHabit(1, { name: "Drink more water" }, {
+      habitRepository: habitRepo,
+      imageStorage,
+    });
+
+    const habit = habitRepo.all()[0];
+    expect(habit.name).toBe("Drink more water");
+    expect(habit.skipWeekends).toBe(true);
   });
 });

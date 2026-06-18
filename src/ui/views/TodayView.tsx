@@ -32,7 +32,9 @@ export function TodayView({ useHabitStore, app }: TodayViewProps) {
   const editingHabit = habits.find((habit) => habit.id === editingHabitId);
 
   const handleCreate = async (values: HabitFormValues) => {
-    await createHabit(values.name, values.imageSourcePath);
+    await createHabit(values.name, values.imageSourcePath, {
+      skipWeekends: values.skipWeekends,
+    });
     setIsCreateOpen(false);
   };
 
@@ -41,6 +43,7 @@ export function TodayView({ useHabitStore, app }: TodayViewProps) {
     await editHabit(editingHabitId, {
       name: values.name,
       imageSourcePath: values.imageSourcePath || undefined,
+      skipWeekends: values.skipWeekends,
     });
     setEditingHabitId(null);
   };
@@ -97,6 +100,7 @@ export function TodayView({ useHabitStore, app }: TodayViewProps) {
         <HabitForm
           initialName={editingHabit.name}
           initialImageUrl={app.toRenderableImageUrl(editingHabit.imagePath)}
+          initialSkipWeekends={editingHabit.skipWeekends}
           onSubmit={handleEditSubmit}
           onCancel={() => setEditingHabitId(null)}
           onDelete={handleDelete}

@@ -22,6 +22,7 @@ export class FakeHabitRepository implements HabitRepository {
       active: true,
       currentStreak: 0,
       sortOrder,
+      skipWeekends: habit.skipWeekends ?? false,
     };
     this.habits.push(created);
     return created;
@@ -32,6 +33,7 @@ export class FakeHabitRepository implements HabitRepository {
     if (!habit) return;
     if (patch.name !== undefined) habit.name = patch.name;
     if (patch.imagePath !== undefined) habit.imagePath = patch.imagePath;
+    if (patch.skipWeekends !== undefined) habit.skipWeekends = patch.skipWeekends;
   }
 
   async softDelete(id: number): Promise<void> {

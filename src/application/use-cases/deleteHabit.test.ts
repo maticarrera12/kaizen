@@ -19,6 +19,7 @@ describe("deleteHabit", () => {
       active: true,
       currentStreak: 5,
       sortOrder: 0,
+      skipWeekends: false,
     });
     recordRepo.seed(1, "2026-06-16", true);
   });

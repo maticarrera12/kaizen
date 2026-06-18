@@ -5,11 +5,13 @@ import { Toast } from "../atoms/Toast";
 export interface HabitFormValues {
   name: string;
   imageSourcePath: string;
+  skipWeekends: boolean;
 }
 
 export interface HabitFormProps {
   initialName?: string;
   initialImageUrl?: string;
+  initialSkipWeekends?: boolean;
   onSubmit: (values: HabitFormValues) => void;
   onCancel: () => void;
   onDelete?: () => void;
@@ -20,6 +22,7 @@ export interface HabitFormProps {
 export function HabitForm({
   initialName = "",
   initialImageUrl,
+  initialSkipWeekends = false,
   onSubmit,
   onCancel,
   onDelete,
@@ -31,6 +34,7 @@ export function HabitForm({
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(
     initialImageUrl,
   );
+  const [skipWeekends, setSkipWeekends] = useState(initialSkipWeekends);
   const [nameError, setNameError] = useState<string | null>(null);
   const [pickError, setPickError] = useState<string | null>(null);
 
@@ -69,7 +73,11 @@ export function HabitForm({
       return;
     }
 
-    onSubmit({ name: trimmedName, imageSourcePath: imageSourcePath ?? "" });
+    onSubmit({
+      name: trimmedName,
+      imageSourcePath: imageSourcePath ?? "",
+      skipWeekends,
+    });
   };
 
   return (
@@ -120,6 +128,25 @@ export function HabitForm({
           >
             Choose image
           </button>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <span className="text-sm font-medium text-slate-700">
+            Skip weekends
+          </span>
+          <label className="relative inline-flex cursor-pointer items-center">
+            <input
+              type="checkbox"
+              role="switch"
+              aria-checked={skipWeekends}
+              aria-label="Skip weekends"
+              checked={skipWeekends}
+              onChange={(event) => setSkipWeekends(event.target.checked)}
+              className="peer sr-only"
+            />
+            <span className="h-6 w-11 rounded-full bg-slate-200 transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2" />
+            <span className="absolute left-1 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
+          </label>
         </div>
 
         <div className="mt-6 flex items-center justify-between gap-3">

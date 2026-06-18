@@ -1,4 +1,5 @@
 import type { LocalDate, StreakInput } from "./types";
+import { isWeekendUtc } from "./weekend";
 
 /**
  * Pure per-habit streak walk. Zero Tauri/React/SQLite imports.
@@ -37,6 +38,11 @@ export function computeStreak(input: StreakInput): number {
     } else if (cursor === input.today) {
       // Today is pending, not a miss, until the day ends: skip it entirely
       // without touching consecutiveMisses or graceUsed.
+    } else if (input.skipWeekends && isWeekendUtc(cursor)) {
+      // Unmarked weekend day on a weekend-skip habit: neutral, like
+      // today-pending — no increment, no miss, no grace consumed. Marked
+      // weekend days are handled by the first branch above and always
+      // count; this branch only ever applies to UNMARKED weekend days.
     } else {
       consecutiveMisses += 1;
       const secondConsecutiveMiss = consecutiveMisses >= 2;

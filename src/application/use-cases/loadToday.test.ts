@@ -29,6 +29,7 @@ describe("loadToday", () => {
       active: true,
       currentStreak: 5, // stale cache, must be forced to 0
       sortOrder: 0,
+      skipWeekends: false,
     });
     // Completed days that, evaluated in isolation, would hold via grace.
     recordRepo.seed(1, "2026-06-10", true);
@@ -59,6 +60,7 @@ describe("loadToday", () => {
       active: true,
       currentStreak: 3,
       sortOrder: 0,
+      skipWeekends: false,
     });
     recordRepo.seed(1, "2026-06-15", true);
     recordRepo.seed(1, "2026-06-16", true);
@@ -87,6 +89,7 @@ describe("loadToday", () => {
       active: true,
       currentStreak: 999, // stale cache, must be replaced by a fresh computation
       sortOrder: 0,
+      skipWeekends: false,
     });
     recordRepo.seed(1, "2026-06-15", true);
     recordRepo.seed(1, "2026-06-16", true);
@@ -116,6 +119,7 @@ describe("loadToday", () => {
       active: true,
       currentStreak: 0,
       sortOrder: 0,
+      skipWeekends: false,
     });
     appStateRepo = new FakeAppStateRepository("2026-06-16");
     clock.set("2026-06-17");
@@ -139,6 +143,7 @@ describe("loadToday", () => {
       active: true,
       currentStreak: 0,
       sortOrder: 0,
+      skipWeekends: false,
     });
     appStateRepo = new FakeAppStateRepository(null);
     clock.set("2026-06-17");
@@ -171,6 +176,7 @@ describe("loadToday", () => {
       active: true,
       currentStreak: 0,
       sortOrder: 0,
+      skipWeekends: false,
     });
 
     const result = await loadToday({
@@ -182,5 +188,106 @@ describe("loadToday", () => {
 
     expect(result.today).toBe(driftingLocalDate);
     expect(await appStateRepo.getLastOpenDate()).toBe(driftingLocalDate);
+  });
+
+  test("B1: skipWeekends habit, last open Friday, reopen Tuesday — only 1 scheduled day missed, global override does not fire, streak survives via grace", async () => {
+    habitRepo.seed({
+      id: 1,
+      name: "Gym",
+      imagePath: "/managed/1.png",
+      createdAt: "2026-06-01",
+      active: true,
+      currentStreak: 10, // stale cache; must be recomputed, not force-reset
+      sortOrder: 0,
+      skipWeekends: true,
+    });
+    recordRepo.seed(1, "2026-06-12", true); // Friday, on-track before the gap
+    // 2026-06-13 (Sat), 2026-06-14 (Sun) unmarked — weekend-skip, neutral
+    // 2026-06-15 (Mon) unmarked — the one scheduled miss, covered by grace
+    // 2026-06-16 (Tue, today) unmarked — today-pending, neutral
+
+    appStateRepo = new FakeAppStateRepository("2026-06-12"); // Friday
+    clock.set("2026-06-16"); // Tuesday
+
+    const result = await loadToday({
+      habitRepository: habitRepo,
+      dailyRecordRepository: recordRepo,
+      appStateRepository: appStateRepo,
+      clock,
+    });
+
+    expect(result.habits[0].currentStreak).toBe(1);
+  });
+
+  test("B2: skipWeekends habit, scheduled-days-missed >= 3 — global override forces streak to 0", async () => {
+    habitRepo.seed({
+      id: 1,
+      name: "Gym",
+      imagePath: "/managed/1.png",
+      createdAt: "2026-06-01",
+      active: true,
+      currentStreak: 10,
+      sortOrder: 0,
+      skipWeekends: true,
+    });
+    recordRepo.seed(1, "2026-06-05", true);
+    recordRepo.seed(1, "2026-06-08", true);
+    recordRepo.seed(1, "2026-06-09", true);
+
+    // Last opened 2026-06-09 (Tue), reopened 2026-06-16 (Tue): scheduled
+    // (non-weekend) days strictly between are Wed/Thu/Fri (06-10/11/12) plus
+    // the following Mon (06-15) — well over the 3-day threshold.
+    appStateRepo = new FakeAppStateRepository("2026-06-09");
+    clock.set("2026-06-16");
+
+    const result = await loadToday({
+      habitRepository: habitRepo,
+      dailyRecordRepository: recordRepo,
+      appStateRepository: appStateRepo,
+      clock,
+    });
+
+    expect(result.habits[0].currentStreak).toBe(0);
+  });
+
+  test("B4: mixed batch — same Fri->Tue gap, a normal habit resets to 0 while a skipWeekends habit survives", async () => {
+    habitRepo.seed({
+      id: 1,
+      name: "Normal habit",
+      imagePath: "/managed/1.png",
+      createdAt: "2026-06-01",
+      active: true,
+      currentStreak: 10,
+      sortOrder: 0,
+      skipWeekends: false,
+    });
+    habitRepo.seed({
+      id: 2,
+      name: "Gym",
+      imagePath: "/managed/2.png",
+      createdAt: "2026-06-01",
+      active: true,
+      currentStreak: 10,
+      sortOrder: 1,
+      skipWeekends: true,
+    });
+    recordRepo.seed(1, "2026-06-12", true);
+    recordRepo.seed(2, "2026-06-12", true); // Friday, both on-track
+
+    appStateRepo = new FakeAppStateRepository("2026-06-12"); // Friday
+    clock.set("2026-06-16"); // Tuesday — calendar gap of 4 days
+
+    const result = await loadToday({
+      habitRepository: habitRepo,
+      dailyRecordRepository: recordRepo,
+      appStateRepository: appStateRepo,
+      clock,
+    });
+
+    const normalHabit = result.habits.find((h) => h.id === 1);
+    const gymHabit = result.habits.find((h) => h.id === 2);
+
+    expect(normalHabit?.currentStreak).toBe(0); // calendar gap >= 3, global reset fires
+    expect(gymHabit?.currentStreak).toBe(1); // scheduled-days-missed = 1, survives via grace
   });
 });

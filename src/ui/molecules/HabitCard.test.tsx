@@ -10,6 +10,7 @@ const baseHabit = {
   imagePath: "/managed/1.png",
   currentStreak: 3,
   completedToday: false,
+  skipWeekends: false,
 };
 
 describe("HabitCard", () => {

@@ -9,10 +9,15 @@ export interface CreateHabitDeps {
   clock: Clock;
 }
 
+export interface CreateHabitOptions {
+  skipWeekends?: boolean;
+}
+
 export async function createHabit(
   name: string,
   imageSourcePath: string,
   deps: CreateHabitDeps,
+  options: CreateHabitOptions = {},
 ): Promise<Habit> {
   const today = deps.clock.today();
 
@@ -29,5 +34,6 @@ export async function createHabit(
     name,
     imagePath,
     createdAt: today,
+    skipWeekends: options.skipWeekends ?? false,
   });
 }

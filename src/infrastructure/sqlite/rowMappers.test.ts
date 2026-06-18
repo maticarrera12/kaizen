@@ -15,6 +15,7 @@ describe("habitRowToHabit", () => {
       active: 1,
       current_streak: 3,
       sort_order: 0,
+      skip_weekends: 0,
     };
 
     expect(habitRowToHabit(row)).toEqual({
@@ -25,6 +26,7 @@ describe("habitRowToHabit", () => {
       active: true,
       currentStreak: 3,
       sortOrder: 0,
+      skipWeekends: false,
     });
   });
 
@@ -37,9 +39,40 @@ describe("habitRowToHabit", () => {
       active: 0,
       current_streak: 0,
       sort_order: 1,
+      skip_weekends: 0,
     };
 
     expect(habitRowToHabit(row).active).toBe(false);
+  });
+
+  test("maps skip_weekends=1 to skipWeekends: true (C7)", () => {
+    const row: HabitRow = {
+      id: 3,
+      name: "Gym",
+      image_path: "/data/habit-images/3.png",
+      created_at: "2026-06-01",
+      active: 1,
+      current_streak: 0,
+      sort_order: 2,
+      skip_weekends: 1,
+    };
+
+    expect(habitRowToHabit(row).skipWeekends).toBe(true);
+  });
+
+  test("maps skip_weekends=0 to skipWeekends: false (C7)", () => {
+    const row: HabitRow = {
+      id: 4,
+      name: "Read",
+      image_path: "/data/habit-images/4.png",
+      created_at: "2026-06-01",
+      active: 1,
+      current_streak: 0,
+      sort_order: 3,
+      skip_weekends: 0,
+    };
+
+    expect(habitRowToHabit(row).skipWeekends).toBe(false);
   });
 });
 

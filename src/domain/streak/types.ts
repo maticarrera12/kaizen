@@ -9,4 +9,5 @@ export interface StreakInput {
   records: DailyRecord[]; // sparse, completed=1 rows only, any order
   today: LocalDate;
   createdAt: LocalDate; // habit.created_at, lower bound — never penalize pre-creation days
+  skipWeekends: boolean; // true: unmarked Sat/Sun are neutral, not misses
 }

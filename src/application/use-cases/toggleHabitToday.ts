@@ -42,6 +42,7 @@ export async function toggleHabitToday(
     records: updatedRecords,
     today,
     createdAt: habit.createdAt,
+    skipWeekends: habit.skipWeekends,
   });
 
   await deps.habitRepository.updateStreakCache(habitId, streak);

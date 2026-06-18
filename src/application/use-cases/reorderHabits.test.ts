@@ -15,6 +15,7 @@ describe("reorderHabits", () => {
       active: true,
       currentStreak: 0,
       sortOrder: 0,
+      skipWeekends: false,
     });
     habitRepo.seed({
       id: 2,
@@ -24,6 +25,7 @@ describe("reorderHabits", () => {
       active: true,
       currentStreak: 0,
       sortOrder: 1,
+      skipWeekends: false,
     });
     habitRepo.seed({
       id: 3,
@@ -33,6 +35,7 @@ describe("reorderHabits", () => {
       active: true,
       currentStreak: 0,
       sortOrder: 2,
+      skipWeekends: false,
     });
   });
 

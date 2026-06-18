@@ -1,5 +1,6 @@
 import Database from "@tauri-apps/plugin-sql";
 import { createHabit } from "../../application/use-cases/createHabit";
+import type { CreateHabitOptions } from "../../application/use-cases/createHabit";
 import { deleteHabit } from "../../application/use-cases/deleteHabit";
 import { editHabit } from "../../application/use-cases/editHabit";
 import type { EditHabitPatch } from "../../application/use-cases/editHabit";
@@ -27,7 +28,11 @@ const DB_PATH = "sqlite:habits.db";
 export interface HabitTrackerApp {
   loadToday(): Promise<LoadTodayResult>;
   toggleHabitToday(habitId: number): Promise<ToggleHabitTodayResult>;
-  createHabit(name: string, imageSourcePath: string): Promise<Habit>;
+  createHabit(
+    name: string,
+    imageSourcePath: string,
+    options?: CreateHabitOptions,
+  ): Promise<Habit>;
   editHabit(habitId: number, patch: EditHabitPatch): Promise<void>;
   deleteHabit(habitId: number): Promise<void>;
   reorderHabits(orderedHabitIds: number[]): Promise<void>;
@@ -66,12 +71,17 @@ export async function createHabitTrackerApp(): Promise<HabitTrackerApp> {
         clock,
       }),
 
-    createHabit: (name: string, imageSourcePath: string) =>
-      createHabit(name, imageSourcePath, {
-        habitRepository,
-        imageStorage,
-        clock,
-      }),
+    createHabit: (
+      name: string,
+      imageSourcePath: string,
+      options?: CreateHabitOptions,
+    ) =>
+      createHabit(
+        name,
+        imageSourcePath,
+        { habitRepository, imageStorage, clock },
+        options,
+      ),
 
     editHabit: (habitId: number, patch: EditHabitPatch) =>
       editHabit(habitId, patch, { habitRepository, imageStorage }),

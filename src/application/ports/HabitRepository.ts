@@ -8,17 +8,20 @@ export interface Habit {
   active: boolean;
   currentStreak: number;
   sortOrder: number;
+  skipWeekends: boolean;
 }
 
 export interface NewHabit {
   name: string;
   imagePath: string;
   createdAt: LocalDate;
+  skipWeekends?: boolean;
 }
 
 export interface HabitPatch {
   name?: string;
   imagePath?: string;
+  skipWeekends?: boolean;
 }
 
 export interface HabitRepository {

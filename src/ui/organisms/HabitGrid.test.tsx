@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react";
 import { HabitGrid } from "./HabitGrid";
 
 const habits = [
-  { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false },
-  { id: 2, name: "Read", imagePath: "/managed/2.png", currentStreak: 0, completedToday: true },
+  { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 3, completedToday: false, skipWeekends: false },
+  { id: 2, name: "Read", imagePath: "/managed/2.png", currentStreak: 0, completedToday: true, skipWeekends: false },
 ];
 
 describe("HabitGrid", () => {

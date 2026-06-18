@@ -15,6 +15,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(4);
@@ -36,6 +37,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-16", // app opens today, today itself not yet marked
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(1);
@@ -56,6 +58,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-16",
       createdAt: "2026-06-14",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(1);
@@ -72,6 +75,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(2);
@@ -88,6 +92,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(3);
@@ -104,6 +109,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(1);
@@ -121,6 +127,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(0);
@@ -144,6 +151,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-16",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(0);
@@ -166,6 +174,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-15",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(2);
@@ -186,6 +195,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-15",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(2);
@@ -202,6 +212,7 @@ describe("computeStreak", () => {
       records: [],
       today: "2026-06-17",
       createdAt: "2026-06-17",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(0);
@@ -225,6 +236,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-18",
       createdAt: "2026-06-16",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(2);
@@ -247,6 +259,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-18",
       createdAt: "2026-06-17",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(1);
@@ -270,6 +283,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-15",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(3);
@@ -295,6 +309,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-18",
       createdAt: "2026-06-17",
+      skipWeekends: false,
     });
 
     // If pre-creation records were honored, the walk would see: today(✓),
@@ -309,6 +324,7 @@ describe("computeStreak", () => {
       records: [],
       today: "2026-06-17",
       createdAt: "2026-06-17",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(0);
@@ -328,6 +344,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(2); // grace day covers the one absent row
@@ -346,6 +363,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     };
 
     const firstComputation = computeStreak(input);
@@ -363,6 +381,7 @@ describe("computeStreak", () => {
       records: [],
       today: "2026-06-17",
       createdAt: "2026-05-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(0);
@@ -384,6 +403,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     const streakInOrder = computeStreak(input(inOrder));
@@ -404,6 +424,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(2);
@@ -424,6 +445,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(2);
@@ -436,6 +458,7 @@ describe("computeStreak", () => {
       records: [{ date: "2026-06-17", completed: true }],
       today: "2026-06-17",
       createdAt: "2026-06-17",
+      skipWeekends: false,
     });
 
     expect(streak).toBe(1);
@@ -470,6 +493,7 @@ describe("computeStreak", () => {
       records,
       today: "2026-06-17",
       createdAt: "2026-06-01",
+      skipWeekends: false,
     });
 
     // Held by grace (06-15 miss consumes the single grace slot, then the
@@ -479,5 +503,114 @@ describe("computeStreak", () => {
     // which is impossible inside this function since it has no access to
     // last_open_date.
     expect(streak).toBe(4);
+  });
+});
+
+describe("computeStreak with skipWeekends: true", () => {
+  test("A1: marked Friday, weekend unmarked, today Monday unmarked — streak preserved at 1", () => {
+    const records: DailyRecord[] = [
+      { date: "2026-06-12", completed: true }, // Friday
+      // 2026-06-13 (Sat), 2026-06-14 (Sun) unmarked — weekend-skip, neutral
+      // 2026-06-15 (Mon, today) unmarked — today-pending, neutral
+    ];
+
+    const streak = computeStreak({
+      records,
+      today: "2026-06-15", // Monday
+      createdAt: "2026-06-01",
+      skipWeekends: true,
+    });
+
+    expect(streak).toBe(1);
+  });
+
+  test("A2: Mon-Fri marked across a weekend boundary, next Monday marked (today) — streak is 6", () => {
+    const records: DailyRecord[] = [
+      { date: "2026-06-08", completed: true }, // Mon
+      { date: "2026-06-09", completed: true }, // Tue
+      { date: "2026-06-10", completed: true }, // Wed
+      { date: "2026-06-11", completed: true }, // Thu
+      { date: "2026-06-12", completed: true }, // Fri
+      // 2026-06-13 (Sat), 2026-06-14 (Sun) unmarked — weekend-skip, neutral
+      { date: "2026-06-15", completed: true }, // Mon, today
+    ];
+
+    const streak = computeStreak({
+      records,
+      today: "2026-06-15",
+      createdAt: "2026-06-01",
+      skipWeekends: true,
+    });
+
+    expect(streak).toBe(6);
+  });
+
+  test("A3: Friday marked, weekend skipped, Monday unmarked (grace), Tuesday marked (today) — streak is 2", () => {
+    const records: DailyRecord[] = [
+      { date: "2026-06-12", completed: true }, // Fri
+      // 2026-06-13 (Sat), 2026-06-14 (Sun) unmarked — weekend-skip, neutral
+      // 2026-06-15 (Mon) unmarked — real weekday miss, consumes grace
+      { date: "2026-06-16", completed: true }, // Tue, today
+    ];
+
+    const streak = computeStreak({
+      records,
+      today: "2026-06-16",
+      createdAt: "2026-06-01",
+      skipWeekends: true,
+    });
+
+    expect(streak).toBe(2);
+  });
+
+  test("A3b: two consecutive missed WEEKDAYS break the streak even with a weekend in between", () => {
+    const records: DailyRecord[] = [
+      { date: "2026-06-12", completed: true }, // Fri
+      // 2026-06-13 (Sat), 2026-06-14 (Sun) unmarked — weekend-skip, neutral
+      // 2026-06-15 (Mon) unmarked — real miss #1, consumes grace
+      // 2026-06-16 (Tue) unmarked — real miss #2, breaks the streak
+      // 2026-06-17 (Wed, today) unmarked — today-pending, neutral
+    ];
+
+    const streak = computeStreak({
+      records,
+      today: "2026-06-17",
+      createdAt: "2026-06-01",
+      skipWeekends: true,
+    });
+
+    expect(streak).toBe(0);
+  });
+
+  test("A4: marking a Saturday counts (+1) — marked beats weekend-skip", () => {
+    const records: DailyRecord[] = [
+      { date: "2026-06-13", completed: true }, // Sat, today
+    ];
+
+    const streak = computeStreak({
+      records,
+      today: "2026-06-13",
+      createdAt: "2026-06-01",
+      skipWeekends: true,
+    });
+
+    expect(streak).toBe(1);
+  });
+
+  test("A5: today is a weekend day (Sunday) and unmarked — neutral via today-pending, not double-processed; prior Friday's mark is the only contribution", () => {
+    const records: DailyRecord[] = [
+      { date: "2026-06-12", completed: true }, // Fri
+      // 2026-06-13 (Sat) unmarked — weekend-skip, neutral
+      // 2026-06-14 (Sun, today) unmarked — today-pending, neutral (not also weekend-skip)
+    ];
+
+    const streak = computeStreak({
+      records,
+      today: "2026-06-14", // Sunday
+      createdAt: "2026-06-01",
+      skipWeekends: true,
+    });
+
+    expect(streak).toBe(1);
   });
 });

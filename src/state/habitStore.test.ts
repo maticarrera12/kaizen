@@ -20,7 +20,7 @@ describe("habitStore", () => {
 
   test("init() loads today's habits from the app", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false, skipWeekends: false },
     ];
 
     await useHabitStore.getState().init();
@@ -50,7 +50,7 @@ describe("habitStore", () => {
 
   test("toggle() optimistically flips completedToday before the app call resolves", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false, skipWeekends: false },
     ];
     await useHabitStore.getState().init();
 
@@ -67,7 +67,7 @@ describe("habitStore", () => {
 
   test("toggle() reconciles back to server truth on success (streak from result, not local guess)", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false, skipWeekends: false },
     ];
     await useHabitStore.getState().init();
 
@@ -80,7 +80,7 @@ describe("habitStore", () => {
 
   test("toggle() rolls back the optimistic update and sets an error when the app call fails", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false, skipWeekends: false },
     ];
     await useHabitStore.getState().init();
     app.failNextToggle = true;
@@ -112,7 +112,7 @@ describe("habitStore", () => {
 
   test("editHabit() calls the app then reloads the habit list", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false, skipWeekends: false },
     ];
     await useHabitStore.getState().init();
 
@@ -124,7 +124,7 @@ describe("habitStore", () => {
 
   test("deleteHabit() calls the app then reloads the habit list", async () => {
     app.habits = [
-      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false },
+      { id: 1, name: "Drink water", imagePath: "/managed/1.png", currentStreak: 2, completedToday: false, skipWeekends: false },
     ];
     await useHabitStore.getState().init();
 
@@ -136,8 +136,8 @@ describe("habitStore", () => {
 
   test("reorderHabits() updates order optimistically and persists via the app", async () => {
     app.habits = [
-      { id: 1, name: "A", imagePath: "/managed/1.png", currentStreak: 0, completedToday: false },
-      { id: 2, name: "B", imagePath: "/managed/2.png", currentStreak: 0, completedToday: false },
+      { id: 1, name: "A", imagePath: "/managed/1.png", currentStreak: 0, completedToday: false, skipWeekends: false },
+      { id: 2, name: "B", imagePath: "/managed/2.png", currentStreak: 0, completedToday: false, skipWeekends: false },
     ];
     await useHabitStore.getState().init();
 
@@ -149,8 +149,8 @@ describe("habitStore", () => {
 
   test("reorderHabits() rolls back and sets an error when persistence fails", async () => {
     app.habits = [
-      { id: 1, name: "A", imagePath: "/managed/1.png", currentStreak: 0, completedToday: false },
-      { id: 2, name: "B", imagePath: "/managed/2.png", currentStreak: 0, completedToday: false },
+      { id: 1, name: "A", imagePath: "/managed/1.png", currentStreak: 0, completedToday: false, skipWeekends: false },
+      { id: 2, name: "B", imagePath: "/managed/2.png", currentStreak: 0, completedToday: false, skipWeekends: false },
     ];
     await useHabitStore.getState().init();
     app.failNextReorder = true;

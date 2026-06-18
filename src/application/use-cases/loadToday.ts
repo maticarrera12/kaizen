@@ -1,5 +1,6 @@
 import { computeStreak } from "../../domain/streak/computeStreak";
 import type { LocalDate } from "../../domain/streak/types";
+import { scheduledDaysMissed } from "../../domain/streak/weekend";
 import type { AppStateRepository } from "../ports/AppStateRepository";
 import type { Clock } from "../ports/Clock";
 import type { DailyRecordRepository } from "../ports/DailyRecordRepository";
@@ -20,6 +21,7 @@ export interface HabitTodayViewModel {
   imagePath: string;
   currentStreak: number;
   completedToday: boolean;
+  skipWeekends: boolean;
 }
 
 export interface LoadTodayResult {
@@ -34,7 +36,6 @@ export async function loadToday(deps: LoadTodayDeps): Promise<LoadTodayResult> {
 
   const daysSinceLastOpen =
     lastOpenDate === null ? 0 : daysBetween(lastOpenDate, today);
-  const globalResetTriggered = daysSinceLastOpen >= GLOBAL_RESET_THRESHOLD_DAYS;
 
   const viewModels: HabitTodayViewModel[] = [];
 
@@ -44,12 +45,22 @@ export async function loadToday(deps: LoadTodayDeps): Promise<LoadTodayResult> {
       (record) => record.date === today && record.completed,
     );
 
+    // KEEP the existing calendar-based check UNCHANGED for skipWeekends:false
+    // habits — this guarantees byte-for-byte regression safety for the
+    // pre-existing locked behavior. Only skipWeekends:true habits use the
+    // schedule-aware count, computed fresh per habit.
+    const globalResetTriggered = habit.skipWeekends
+      ? scheduledDaysMissed(lastOpenDate, today, true) >=
+        GLOBAL_RESET_THRESHOLD_DAYS
+      : daysSinceLastOpen >= GLOBAL_RESET_THRESHOLD_DAYS;
+
     const streak = globalResetTriggered
       ? 0
       : computeStreak({
           records,
           today,
           createdAt: habit.createdAt,
+          skipWeekends: habit.skipWeekends,
         });
 
     await deps.habitRepository.updateStreakCache(habit.id, streak);
@@ -60,6 +71,7 @@ export async function loadToday(deps: LoadTodayDeps): Promise<LoadTodayResult> {
       imagePath: habit.imagePath,
       currentStreak: streak,
       completedToday,
+      skipWeekends: habit.skipWeekends,
     });
   }
 

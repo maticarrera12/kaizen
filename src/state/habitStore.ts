@@ -9,7 +9,11 @@ export interface HabitStore {
   error: string | null;
   init: () => Promise<void>;
   toggle: (habitId: number) => Promise<void>;
-  createHabit: (name: string, imageSourcePath: string) => Promise<void>;
+  createHabit: (
+    name: string,
+    imageSourcePath: string,
+    options?: { skipWeekends?: boolean },
+  ) => Promise<void>;
   editHabit: (habitId: number, patch: EditHabitPatch) => Promise<void>;
   deleteHabit: (habitId: number) => Promise<void>;
   reorderHabits: (orderedHabitIds: number[]) => Promise<void>;
@@ -76,9 +80,13 @@ export function createHabitStore(app: HabitTrackerApp) {
       }
     },
 
-    createHabit: async (name: string, imageSourcePath: string) => {
+    createHabit: async (
+      name: string,
+      imageSourcePath: string,
+      options?: { skipWeekends?: boolean },
+    ) => {
       try {
-        await app.createHabit(name, imageSourcePath);
+        await app.createHabit(name, imageSourcePath, options);
         const result = await app.loadToday();
         set({ habits: result.habits });
       } catch (error) {

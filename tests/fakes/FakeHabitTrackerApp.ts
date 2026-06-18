@@ -15,7 +15,11 @@ export class FakeHabitTrackerApp implements HabitTrackerApp {
 
   loadTodayCalls = 0;
   toggleCalls: number[] = [];
-  createCalls: Array<{ name: string; imageSourcePath: string }> = [];
+  createCalls: Array<{
+    name: string;
+    imageSourcePath: string;
+    skipWeekends?: boolean;
+  }> = [];
   editCalls: Array<{ habitId: number; patch: EditHabitPatch }> = [];
   deleteCalls: number[] = [];
   reorderCalls: number[][] = [];
@@ -54,8 +58,16 @@ export class FakeHabitTrackerApp implements HabitTrackerApp {
     };
   }
 
-  async createHabit(name: string, imageSourcePath: string): Promise<Habit> {
-    this.createCalls.push({ name, imageSourcePath });
+  async createHabit(
+    name: string,
+    imageSourcePath: string,
+    options?: { skipWeekends?: boolean },
+  ): Promise<Habit> {
+    this.createCalls.push({
+      name,
+      imageSourcePath,
+      skipWeekends: options?.skipWeekends,
+    });
     if (this.failNextCreate) {
       this.failNextCreate = false;
       throw new Error("create failed");
@@ -67,6 +79,7 @@ export class FakeHabitTrackerApp implements HabitTrackerApp {
       imagePath: `/managed/${id}.png`,
       currentStreak: 0,
       completedToday: false,
+      skipWeekends: options?.skipWeekends ?? false,
     });
     return {
       id,
@@ -76,6 +89,7 @@ export class FakeHabitTrackerApp implements HabitTrackerApp {
       active: true,
       currentStreak: 0,
       sortOrder: this.habits.length - 1,
+      skipWeekends: options?.skipWeekends ?? false,
     };
   }
 

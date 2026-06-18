@@ -10,6 +10,7 @@ export interface HabitRow {
   active: number; // SQLite has no boolean type; 0/1
   current_streak: number;
   sort_order: number;
+  skip_weekends: number; // 0/1
 }
 
 /** Raw shape returned by `db.select<DailyRecordRow[]>(...)` against `daily_records`. */
@@ -29,6 +30,7 @@ export function habitRowToHabit(row: HabitRow): Habit {
     active: row.active === 1,
     currentStreak: row.current_streak,
     sortOrder: row.sort_order,
+    skipWeekends: row.skip_weekends === 1,
   };
 }
 

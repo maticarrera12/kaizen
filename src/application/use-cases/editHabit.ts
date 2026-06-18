@@ -4,6 +4,7 @@ import type { ImageStorage } from "../ports/ImageStorage";
 export interface EditHabitPatch {
   name?: string;
   imageSourcePath?: string;
+  skipWeekends?: boolean;
 }
 
 export interface EditHabitDeps {
@@ -17,8 +18,11 @@ export async function editHabit(
   deps: EditHabitDeps,
 ): Promise<void> {
   if (patch.imageSourcePath === undefined) {
-    if (patch.name !== undefined) {
-      await deps.habitRepository.update(habitId, { name: patch.name });
+    if (patch.name !== undefined || patch.skipWeekends !== undefined) {
+      await deps.habitRepository.update(habitId, {
+        name: patch.name,
+        skipWeekends: patch.skipWeekends,
+      });
     }
     return;
   }
@@ -38,6 +42,7 @@ export async function editHabit(
   await deps.habitRepository.update(habitId, {
     name: patch.name,
     imagePath: newImagePath,
+    skipWeekends: patch.skipWeekends,
   });
 
   await deps.imageStorage.delete(oldImagePath);

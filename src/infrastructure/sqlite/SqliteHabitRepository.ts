@@ -26,10 +26,12 @@ export class SqliteHabitRepository implements HabitRepository {
     );
     const sortOrder = (maxSortRows[0]?.max_sort ?? -1) + 1;
 
+    const skipWeekends = habit.skipWeekends ?? false;
+
     const result = await this.db.execute(
-      `INSERT INTO habits (name, image_path, created_at, active, current_streak, sort_order)
-       VALUES ($1, $2, $3, 1, 0, $4)`,
-      [habit.name, habit.imagePath, habit.createdAt, sortOrder],
+      `INSERT INTO habits (name, image_path, created_at, active, current_streak, sort_order, skip_weekends)
+       VALUES ($1, $2, $3, 1, 0, $4, $5)`,
+      [habit.name, habit.imagePath, habit.createdAt, sortOrder, skipWeekends ? 1 : 0],
     );
 
     const id = result.lastInsertId;
@@ -45,6 +47,7 @@ export class SqliteHabitRepository implements HabitRepository {
       active: true,
       currentStreak: 0,
       sortOrder,
+      skipWeekends,
     };
   }
 
@@ -60,6 +63,10 @@ export class SqliteHabitRepository implements HabitRepository {
     if (patch.imagePath !== undefined) {
       sets.push(`image_path = $${paramIndex++}`);
       values.push(patch.imagePath);
+    }
+    if (patch.skipWeekends !== undefined) {
+      sets.push(`skip_weekends = $${paramIndex++}`);
+      values.push(patch.skipWeekends ? 1 : 0);
     }
 
     if (sets.length === 0) return;
@@ -77,7 +84,7 @@ export class SqliteHabitRepository implements HabitRepository {
 
   async listActive(): Promise<Habit[]> {
     const rows = await this.db.select<HabitRow[]>(
-      `SELECT id, name, image_path, created_at, active, current_streak, sort_order
+      `SELECT id, name, image_path, created_at, active, current_streak, sort_order, skip_weekends
        FROM habits WHERE active = 1 ORDER BY sort_order ASC, id ASC`,
     );
     return rows.map(habitRowToHabit);
