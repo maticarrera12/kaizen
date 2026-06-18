@@ -35,7 +35,10 @@ export function DayCell({
     >
       <span className="text-xs font-semibold text-slate-500">{dayNumber}</span>
 
-      <div className="relative flex-1">
+      <div
+        data-testid="mascot-scatter-area"
+        className="relative min-h-16 flex-1"
+      >
         {mascots.map((mascot, index) => (
           <MascotPostIt
             key={mascot.id}

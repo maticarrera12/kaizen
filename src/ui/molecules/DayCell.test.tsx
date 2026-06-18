@@ -92,4 +92,21 @@ describe("DayCell", () => {
 
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
+
+  test("the mascot scatter area is positioned relatively with a stable non-zero min-height so cell-relative percentages resolve correctly", () => {
+    render(
+      <DayCell
+        date="2026-06-17"
+        dayNumber={17}
+        inMonth={true}
+        mascots={[mascot(1)]}
+        overflowCount={0}
+        toImageUrl={(path) => `asset://${path}`}
+      />,
+    );
+
+    const scatterArea = screen.getByTestId("mascot-scatter-area");
+    expect(scatterArea).toHaveClass("relative");
+    expect(scatterArea.className).toMatch(/min-h-/);
+  });
 });

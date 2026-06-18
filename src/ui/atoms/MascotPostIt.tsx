@@ -23,14 +23,19 @@ export function MascotPostIt({
   date,
   indexInDay,
 }: MascotPostItProps) {
-  const { rotationDeg, offsetXPercent, offsetYPercent, zIndex } =
-    computePostItTransform(habitId, date, indexInDay);
+  const { rotationDeg, topPct, leftPct, zIndex } = computePostItTransform(
+    habitId,
+    date,
+    indexInDay,
+  );
 
   return (
     <div
       className="absolute h-8 w-8"
       style={{
-        transform: `rotate(${rotationDeg}deg) translate(${offsetXPercent}%, ${offsetYPercent}%)`,
+        top: `${topPct}%`,
+        left: `${leftPct}%`,
+        transform: `rotate(${rotationDeg}deg)`,
         zIndex,
       }}
     >
